@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+    Caffeinate - Mantener Mac despierto
+
+    Este job mantiene el Mac despierto desde las 17:00 hasta las 02:00
+    para que los jobs nocturnos puedan ejecutarse.
+
+    Instalación:
+    1. Copiar a ~/Library/LaunchAgents/
+    2. launchctl load ~/Library/LaunchAgents/com.phpdev.caffeinate.plist
+
+    Verificar:
+    launchctl list | grep phpdev
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.phpdev.caffeinate</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/caffeinate</string>
+        <!-- -i: Prevenir idle sleep -->
+        <string>-i</string>
+        <!-- -t: Tiempo en segundos (9 horas = 32400s) -->
+        <string>-t</string>
+        <string>32400</string>
+    </array>
+
+    <!-- Iniciar a las 17:00, mantener despierto 9 horas (hasta 02:00) -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>17</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- No necesita logs -->
+    <key>StandardOutPath</key>
+    <string>/dev/null</string>
+
+    <key>StandardErrorPath</key>
+    <string>/dev/null</string>
+</dict>
+</plist>
