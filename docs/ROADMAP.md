@@ -32,161 +32,147 @@ DESCARTAR      → Sobreingeniería clara o ya existe solución
 
 ---
 
-## Propuestas a Evaluar
+## Caso de Estudio: Proyecto SNAAPI
 
-### 1. Skills Específicos de Symfony
+Análisis realizado el 2026-01-29 sobre proyecto Symfony 6.4 real.
 
-**Descripción**: Crear `/symfony-*` skills para comandos, bundles, doctrine, etc.
+### Métricas del Proyecto
 
-#### Análisis
+| Métrica | Valor |
+|---------|-------|
+| Archivos PHP (src) | 89 |
+| Archivos PHP (tests) | 63 |
+| Líneas de código | ~5,659 |
+| Stack | Symfony 6.4, PHP 8.1+, PHPStan 9, PHPUnit 10 |
 
-| Criterio | Evaluación |
-|----------|------------|
-| Problema Real | ❓ ¿Hay frustración actual trabajando con Symfony sin skills específicos? |
-| Frecuencia | ❓ ¿Cuántos proyectos Symfony hay activos? |
-| Alternativa Simple | ⚠️ El skill `/php-refactor` ya cubre patrones generales |
-| Complejidad | ~200-400 líneas por skill |
-| Mantenimiento | Alto - Symfony cambia entre versiones |
+### Problemas Reales Detectados
 
-#### Preguntas Antes de Implementar
+| Archivo | Problema | Evidencia |
+|---------|----------|-----------|
+| `EditorialOrchestrator.php` | 536 líneas | CLAUDE.md dice max 200 |
+| `execute()` método | ~180 líneas | CLAUDE.md dice max 20 |
+| Constructor | 18 dependencias | Violación SRP |
+| Líneas 125-207 | Código duplicado | `insertedNews` ≈ `recommendedEditorials` |
+| Varios archivos | 5x `@phpstan-ignore` | Code smells |
 
-1. ¿Qué tarea específica de Symfony es repetitiva y tediosa hoy?
-2. ¿Claude Code sin skills especiales falla en esas tareas?
-3. ¿Un prompt bien escrito en `/prd` resuelve lo mismo?
+### Skill Existente Mal Adaptado
 
-#### Veredicto Preliminar
+El proyecto tiene `.claude/skills/code-simplifier.md` pero menciona:
+- "ES modules"
+- "arrow functions"
+- "React components"
 
-```
-[ ] IMPLEMENTAR
-[ ] SIMPLIFICAR
-[?] POSPONER     ← Probable: necesita evidencia de uso real
-[ ] DESCARTAR
-```
-
----
-
-### 2. Skills de Testing/Migrations
-
-**Descripción**: Skills para `/test-generate`, `/migration-create`, etc.
-
-#### Análisis
-
-| Criterio | Evaluación |
-|----------|------------|
-| Problema Real | ❓ ¿Se olvidan tests? ¿Las migrations son problemáticas? |
-| Frecuencia | Tests: potencialmente alto. Migrations: bajo |
-| Alternativa Simple | ⚠️ PRD puede especificar "incluir tests" |
-| Complejidad | ~100-150 líneas por skill |
-| Mantenimiento | Bajo si son genéricos |
-
-#### Preguntas Antes de Implementar
-
-1. ¿El agente actualmente NO genera tests cuando debería?
-2. ¿Las migrations generadas tienen problemas recurrentes?
-3. ¿Bastaría con añadir "siempre incluir tests" en CLAUDE.md?
-
-#### Veredicto Preliminar
-
-```
-[ ] IMPLEMENTAR
-[?] SIMPLIFICAR  ← Probable: añadir regla en CLAUDE.md primero
-[ ] POSPONER
-[ ] DESCARTAR
-```
+**Conclusión**: Es una plantilla JavaScript que nunca se adaptó a PHP.
 
 ---
 
-### 3. Mejoras al Loop de Automatización
+## Propuestas Evaluadas con Evidencia
 
-**Descripción**: Añadir retry logic, notificaciones, paralelismo, etc.
+### 1. Corregir `/code-simplifier` para PHP
 
-#### Análisis
-
-| Criterio | Evaluación |
-|----------|------------|
-| Problema Real | ❓ ¿El loop actual falla frecuentemente? |
-| Frecuencia | N/A - es infraestructura |
-| Alternativa Simple | ⚠️ El loop actual ya tiene manejo básico de errores |
-| Complejidad | Variable - puede escalar rápidamente |
-| Mantenimiento | Alto si se añade mucha lógica |
-
-#### Preguntas Antes de Implementar
-
-1. ¿Cuántas veces ha fallado el loop nocturno?
-2. ¿Qué tipo de fallos han ocurrido?
-3. ¿El problema es el loop o la calidad de las tareas?
-
-#### Veredicto Preliminar
-
-```
-[ ] IMPLEMENTAR
-[ ] SIMPLIFICAR
-[ ] POSPONER
-[?] DESCARTAR    ← Probable: optimización prematura sin datos de fallos
-```
-
----
-
-### 4. Configuración de Backlog Inicial
-
-**Descripción**: Crear un `reports/backlog.md` con items priorizados.
-
-#### Análisis
+**Descripción**: Adaptar el skill existente para que funcione con PHP/Symfony.
 
 | Criterio | Evaluación |
 |----------|------------|
-| Problema Real | ✅ Sin backlog, el sistema nocturno no hace nada |
-| Frecuencia | Necesario para que TODO funcione |
-| Alternativa Simple | ❌ No hay alternativa - es requisito |
-| Complejidad | ~20-50 líneas de markdown |
-| Mantenimiento | Bajo - el usuario lo actualiza |
+| Problema Real | ✅ El skill actual NO funciona - menciona JS/React |
+| Frecuencia | ✅ Cada sesión de desarrollo |
+| Alternativa Simple | ❌ No existe - hay que corregirlo |
+| Complejidad | ~100 líneas |
+| Mantenimiento | Bajo |
 
-#### Preguntas Antes de Implementar
-
-1. ¿Qué proyectos/tareas reales hay pendientes?
-2. ¿Cuál es el criterio de priorización?
-
-#### Veredicto Preliminar
-
-```
-[✓] IMPLEMENTAR  ← Claro: es requisito para usar el sistema
-[ ] SIMPLIFICAR
-[ ] POSPONER
-[ ] DESCARTAR
-```
+**Veredicto**: 🟢 **IMPLEMENTAR**
 
 ---
 
-## Resumen de Evaluación
+### 2. Skills Específicos de Symfony
+
+**Descripción**: Crear `/symfony-*` skills para comandos, bundles, doctrine.
+
+| Criterio | Evaluación |
+|----------|------------|
+| Problema Real | ❌ SNAAPI ya tiene CLAUDE.md completo con patrones Symfony |
+| Frecuencia | ❓ Sin datos |
+| Alternativa Simple | ✅ CLAUDE.md del proyecto ya cubre todo |
+
+**Veredicto**: 🔴 **DESCARTAR** - El CLAUDE.md del proyecto ya define:
+- Controladores delgados
+- Compiler Passes
+- Service tags
+- REST best practices
+- DDD layers
+
+---
+
+### 3. Skills de Testing/Migrations
+
+| Criterio | Evaluación |
+|----------|------------|
+| Problema Real | ❌ SNAAPI tiene 63 tests, MSI 79% |
+| Alternativa Simple | ✅ Ya existe `make tests`, `make test_unit` |
+
+**Veredicto**: 🔴 **DESCARTAR** - No hay evidencia de problema.
+
+---
+
+### 4. Mejoras al Loop de Automatización
+
+| Criterio | Evaluación |
+|----------|------------|
+| Problema Real | ❌ No hay datos de fallos |
+| Alternativa Simple | ✅ El loop actual ya tiene manejo de errores |
+
+**Veredicto**: 🔴 **DESCARTAR** - Optimización prematura.
+
+---
+
+### 5. Skill de Detección de Violaciones
+
+**Descripción**: Detectar automáticamente clases >200 líneas, métodos >20 líneas.
+
+| Criterio | Evaluación |
+|----------|------------|
+| Problema Real | ✅ SNAAPI tiene clases de 536 líneas violando sus propias reglas |
+| Frecuencia | ✅ Cada refactorización |
+| Alternativa Simple | ⚠️ Puede integrarse en `/code-simplifier` |
+
+**Veredicto**: 🟡 **SIMPLIFICAR** - Integrar en `/code-simplifier` en lugar de skill separado.
+
+---
+
+## Resumen de Decisiones (Post-Análisis)
 
 | Propuesta | Veredicto | Razón |
 |-----------|-----------|-------|
-| Skills Symfony | 🟡 POSPONER | Sin evidencia de necesidad real |
-| Skills Testing | 🟡 SIMPLIFICAR | Probar primero con regla en CLAUDE.md |
-| Mejoras Loop | 🔴 DESCARTAR | Optimización prematura |
-| Backlog Inicial | 🟢 IMPLEMENTAR | Requisito para usar el sistema |
+| Corregir `/code-simplifier` | 🟢 IMPLEMENTAR | No funciona actualmente |
+| Skills Symfony | 🔴 DESCARTAR | CLAUDE.md ya es suficiente |
+| Skills Testing | 🔴 DESCARTAR | Tests ya funcionan bien |
+| Mejoras Loop | 🔴 DESCARTAR | Sin datos de fallos |
+| Detección violaciones | 🟡 SIMPLIFICAR | Integrar en code-simplifier |
 
 ---
 
-## Próximos Pasos Recomendados
+## Plan de Implementación
 
-### Fase 1: Lo Mínimo Necesario (Ahora)
+### Fase 1: Única Mejora Necesaria
 
-1. **Crear backlog inicial** con 3-5 tareas reales de un proyecto Symfony
-2. **Probar el flujo completo** manualmente una vez
-3. **Documentar qué falla** o qué falta
+1. **Crear `/php-simplifier`** o corregir `/code-simplifier`:
+   - Adaptado para PHP 8.1+
+   - Detectar clases > 200 líneas
+   - Detectar métodos > 20 líneas
+   - Detectar constructores con > 5 dependencias
+   - Sugerir extracción de clases/métodos
+   - Seguir patrones DDD/SOLID del CLAUDE.md del proyecto
 
-### Fase 2: Basado en Evidencia (Después de usar)
+### Fase 2: Backlog con Tareas Reales
 
-1. Revisar logs de ejecución
-2. Identificar patrones de fallos reales
-3. Decidir qué skills realmente hacen falta
+Crear `reports/backlog.md` con tareas de refactorización detectadas:
 
-### Fase 3: Iterar (Solo si hay datos)
-
-1. Implementar SOLO lo que los datos muestren necesario
-2. Medir impacto
-3. Repetir
+```markdown
+1. Refactorizar EditorialOrchestrator.php (536 → <200 líneas)
+2. Extraer método execute() en métodos pequeños
+3. Eliminar código duplicado insertedNews/recommendedEditorials
+4. Resolver @phpstan-ignore comments
+```
 
 ---
 
@@ -194,8 +180,20 @@ DESCARTAR      → Sobreingeniería clara o ya existe solución
 
 | Fecha | Decisión | Razón | Resultado |
 |-------|----------|-------|-----------|
-| 2026-01-29 | Crear framework de evaluación | Evitar sobreingeniería | Pendiente |
-| | | | |
+| 2026-01-29 | Crear framework de evaluación | Evitar sobreingeniería | ✅ Creado |
+| 2026-01-29 | Analizar proyecto SNAAPI | Obtener evidencia real | ✅ Completado |
+| 2026-01-29 | Descartar skills Symfony | CLAUDE.md ya suficiente | ✅ Descartado |
+| 2026-01-29 | Descartar skills testing | Tests ya funcionan | ✅ Descartado |
+| 2026-01-29 | Implementar `/php-simplifier` | Skill actual no funciona | 🔄 Pendiente |
+
+---
+
+## Lecciones Aprendidas
+
+1. **Analizar antes de proponer**: Sin ver SNAAPI, habríamos propuesto skills innecesarios
+2. **El proyecto ya tiene lo que necesita**: Su CLAUDE.md es completo
+3. **El problema real era simple**: Un skill mal adaptado
+4. **La refactorización es el trabajo real**: No el plugin
 
 ---
 
@@ -204,3 +202,4 @@ DESCARTAR      → Sobreingeniería clara o ya existe solución
 - Este documento se actualiza conforme se toman decisiones
 - Cada implementación debe referenciar este análisis
 - Si no hay entrada aquí, no se implementa
+- **Principio**: Preferir mejorar documentación existente sobre crear nuevos skills
