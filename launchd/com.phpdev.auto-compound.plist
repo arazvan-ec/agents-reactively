@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+    Auto Compound - launchd configuration
+
+    Este job implementa automáticamente el item #1 de prioridad del backlog.
+    Se ejecuta a las 23:00 (después de daily-compound-review).
+
+    Instalación:
+    1. Copiar a ~/Library/LaunchAgents/
+    2. Actualizar las rutas según tu configuración
+    3. launchctl load ~/Library/LaunchAgents/com.phpdev.auto-compound.plist
+
+    Verificar:
+    launchctl list | grep phpdev
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.phpdev.auto-compound</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <!-- ACTUALIZAR: Ruta al script -->
+        <string>/Users/YOUR_USERNAME/projects/php-project/scripts/compound/auto-compound.sh</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <!-- ACTUALIZAR: Ruta al proyecto -->
+    <string>/Users/YOUR_USERNAME/projects/php-project</string>
+
+    <!-- Ejecutar a las 23:00 todos los días -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>23</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <!-- ACTUALIZAR: Ruta de logs -->
+    <string>/Users/YOUR_USERNAME/projects/php-project/logs/auto-compound.log</string>
+
+    <key>StandardErrorPath</key>
+    <!-- ACTUALIZAR: Ruta de logs -->
+    <string>/Users/YOUR_USERNAME/projects/php-project/logs/auto-compound.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>HOME</key>
+        <!-- ACTUALIZAR: Tu directorio home -->
+        <string>/Users/YOUR_USERNAME</string>
+    </dict>
+
+    <!-- No reintentar si falla -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- Evitar múltiples instancias -->
+    <key>AbandonProcessGroup</key>
+    <false/>
+</dict>
+</plist>
